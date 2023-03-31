@@ -7,33 +7,30 @@ env:
 
 jobs:
   run:
-    name: Node.js ${{ matrix.node }} @ ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [8.6, 10, 12, 14, 16]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
+    - uses: leafo/gh-actions-lua@v9
+      with:
+        luaVersion: "5.1"
 
-      - name: Install npm dependencies
-        run: npm install
+    - uses: leafo/gh-actions-luarocks@v5
 
-      - name: Run tests
-        run: npm run test:ci
+    - name: Install dependencies
+      run: |
+        luarocks install luafilesystem
+        # luarocks install cluacov
+        # luarocks install luacov-reporter-lcov
 
-      - name: Run Coveralls
-        # `master` should be a tag but they don't have one
-        uses: coverallsapp/github-action@master
-        if: startsWith(matrix.os, 'ubuntu') && matrix.node == 14
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+    - name: transpile code down to lua 5.1
+      run: |
+        cargo install --git https://gitlab.com/seaofvoices/darklua.git#v0.6.0
+        darklua process src/ src/ --format retain-lines
+
+    - name: Test
+      run: |
+        # lua -lluacov test/testez.lua
+        # luacov -r lcov
