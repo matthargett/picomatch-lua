@@ -27,7 +27,7 @@ jobs:
 
     - name: strong types analysis
       shell: bash
-      run: luau-lsp analyze --sourcemap=sourcemap.json --defs=globalTypes.d.lua --defs=testez.d.lua src/
+      run: luau-lsp analyze --sourcemap=sourcemap.json --defs=globalTypes.d.lua --defs=testez.d.lua lib/ test/
 
     - name: code quality
       shell: bash

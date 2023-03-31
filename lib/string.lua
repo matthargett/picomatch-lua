@@ -96,6 +96,29 @@ exports.replace = function(str: string, regExp: RegExp, replaceFunction: Replace
   return result
 end
 
+-- TODO: support utf8 and the substring "" case documented in MDN
+-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll
+exports.replaceAll = function(str: string, substring: string, replacer)
+  local index = string.find(str, substring, 1, true)
+  if index == nil then
+    return str
+  end
+
+  local output = ""
+  local substringLength = string.len(substring)
+  local endIndex = 1
+
+  repeat
+    output ..= string.sub(str, endIndex, index - 1) .. substring .. replacer
+    endIndex = index + substringLength
+    -- TODO: add indexOf to string and use it here
+    index = string.find(str, substring, endIndex, true)
+  until index == nil
+
+  output ..= exports.slice(str, endIndex)
+  return output
+end
+
 exports.slice = function(str: string, startIndex: number, lastIndex_: number?): string
   local stringLength = string.len(str)
 
