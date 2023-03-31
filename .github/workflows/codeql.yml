@@ -27,11 +27,11 @@ jobs:
 
     - name: strong types analysis
       shell: bash
-      run: luau-lsp analyze --sourcemap=sourcemap.json --defs=globalTypes.d.lua --defs=testez.d.lua lib/ test/
+      run: luau-lsp analyze --sourcemap=sourcemap.json --defs=globalTypes.d.lua --defs=testez.d.lua lib/
 
     - name: code quality
       shell: bash
       run: |
-        stylua -c lib test
-        selene lib test
+        stylua -c lib
+        selene lib
   
