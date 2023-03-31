@@ -28,7 +28,7 @@ return function()
   local function format(input)
     return string.gsub(input, "^%./", "", 1)
   end
-  local picomatch = require(script.Parent)
+  local picomatch = require(script.Parent.Parent)
   local isMatch, makeRe = picomatch.isMatch, picomatch.makeRe
 
   describe("minimatch parity:", function()

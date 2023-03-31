@@ -27,6 +27,7 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 --!nocheck
+--!nolint
 local Array = require(script.Parent.array)
 type Array<T> = Array.Array<T>
 type Object = { [string]: any }

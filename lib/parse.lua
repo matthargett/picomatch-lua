@@ -179,7 +179,7 @@ local function parse(input: string, options: Object): Object
   end
 
   state.peek = function(n_: number?): string
-    local n = if n_ ~= nil then n_ else 1
+    local n = n_ or 1
     return string.sub(input, state.index + n, state.index + n)
   end
   local peek = state.peek
@@ -608,18 +608,7 @@ local function parse(input: string, options: Object): Object
       end
 
       local escaped = utils.escapeRegex(prev.value)
-      state.output = String.slice(state.output, 1, -#prev.value)
-
-      -- when literal brackets are explicitly enabled
-      -- assume we should escape the brackets to match literal characters
-      if opts.literalBrackets == true then
-        state.output ..= escaped
-        prev.value = escaped
-        continue
-      end
-
-      local escaped = utils.escapeRegex(prev.value)
-      state.output = String.slice(state.output, 1, -#prev.value)
+      state.output = String.slice(state.output, 1, -string.len(prev.value))
 
       -- when literal brackets are explicitly enabled
       -- assume we should escape the brackets to match literal characters
@@ -962,7 +951,7 @@ local function parse(input: string, options: Object): Object
 
       -- Lua BUG: afterStar not syntax highlighted correctly here
       if prior.type == "slash" and prior.prev.type ~= "bos" and not afterStar and eos() then
-        state.output = String.slice(state.output, 1, -#(prior.output .. prev.output))
+        state.output = String.slice(state.output, 1, -(string.len(prior.output) + string.len(prev.output)))
         prior.output = `?:{prior.output}`
 
         prev.type = "globstar"
@@ -977,7 +966,7 @@ local function parse(input: string, options: Object): Object
       if prior.type == "slash" and prior.prev.type ~= "bos" and string.sub(rest, 1, 1) == "/" then
         local end_ = if string.sub(rest, 2, 2) ~= nil then "|$" else ""
 
-        state.output = String.slice(state.output, 1, -#(prior.output .. prev.output))
+        state.output = String.slice(state.output, 1, -(string.len(prior.output) + string.len(prev.output)))
         prior.output = `(?:{prior.output}`
 
         prev.type = "globstar"
