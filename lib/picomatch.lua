@@ -166,7 +166,7 @@ end
  * @return {Object} Returns an object with matching info.
  * @api public
  ]]
-picomatchCallableTable.test = function(input, regex, options, more_: Object?)
+function picomatchCallableTable.test(input, regex, options, more_: Object?)
   local more = if more_ ~= nil then options else {} :: Object
   local glob, posix = more.glob, more.posix
   if type(input) ~= "string" then
@@ -228,7 +228,7 @@ end
  * @return {Boolean} Returns true if any patterns match `str`
  * @api public
  ]]
-picomatchCallableTable.isMatch = function(str, patterns, options): boolean
+function picomatchCallableTable.isMatch(str, patterns, options): boolean
   return picomatch(patterns, options)(str) :: boolean
 end
 --[[*
@@ -245,7 +245,7 @@ end
  * @api public
  ]]
 --Lua FIXME: ridiculous bogus error TypeError: Type '(Array<any> | string, Object) -> Array where Array = {Array}' could not be converted into '(a, Object) -> Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<Array<... *TRUNCATED*'
-picomatchCallableTable.parse = function(pattern: any, options: Object?): any
+function picomatchCallableTable.parse(pattern: any, options: Object?): any
   if Array.isArray(pattern) then
     return Array.map(pattern :: Array<any>, function(p)
       return picomatchCallableTable.parse(p, options)
@@ -293,7 +293,7 @@ picomatchCallableTable.scan = scan
  * @return {RegExp}
  * @api public
  ]]
-picomatchCallableTable.compileRe = function(state, options, returnOutput_: boolean?, returnState_: boolean?)
+function picomatchCallableTable.compileRe(state, options, returnOutput_: boolean?, returnState_: boolean?)
   local returnOutput = if returnOutput_ ~= nil then returnOutput_ else false
   -- missing 'if' in if-expression below directs me to this correct line:  error parsing: error occurred while creating ast: unexpected token `then`. (starting from line 299, character 32 and ending on line 299, character 36) additional information: expected 'end'
 
@@ -332,7 +332,7 @@ end
  * @return {RegExp} Returns a regex created from the given pattern.
  * @api public
  ]]
-picomatchCallableTable.makeRe = function(input, options_: Object?, returnOutput_: boolean?, returnState_: boolean?)
+function picomatchCallableTable.makeRe(input, options_: Object?, returnOutput_: boolean?, returnState_: boolean?)
   local options = options_ or {} :: Object
   local returnOutput = if returnOutput_ ~= nil then returnOutput_ else false
   local returnState = if returnState_ ~= nil then returnState_ else false
@@ -369,7 +369,7 @@ end
  * @return {RegExp}
  * @api public
  ]]
-picomatchCallableTable.toRegex = function(source: string, options: Object?)
+function picomatchCallableTable.toRegex(source: string, options: Object?)
   local opts = options or {} :: Object
   local ok, result = pcall(RegExp, source, if opts.flags then opts.flags else if opts.nocase then "i" else "")
   if not ok then

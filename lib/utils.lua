@@ -76,7 +76,7 @@ exports.supportsLookbehinds = function(): false
   return false
 end
 
-exports.isWindows = function(options): boolean
+function exports.isWindows(options): boolean
   if type(options) == "table" and type(options.windows) == "boolean" then
     return options.windows
   end
