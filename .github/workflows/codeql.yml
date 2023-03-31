@@ -1,28 +1,37 @@
-name: "CodeQL"
-
 on:
   push:
+    branches:
+    - master
+
   pull_request:
-  schedule:
-    - cron: "0 0 * * 0"
+    branches:
+    - master
 
 jobs:
   analyze:
-    name: Analyze
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      # Initializes the CodeQL tools for scanning.
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: "javascript"
+    - uses: Roblox/setup-foreman@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v1
+    - name: Download global Roblox types
+      shell: bash
+      run: curl -s -O https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/master/scripts/globalTypes.d.lua
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+    - name: Generate sourcemap for LSP
+      shell: bash
+      run: rojo sourcemap default.project.json -o sourcemap.json
+
+    - name: strong types analysis
+      shell: bash
+      run: luau-lsp analyze --sourcemap=sourcemap.json --defs=globalTypes.d.lua --defs=testez.d.lua src/
+
+    - name: code quality
+      shell: bash
+      run: |
+        stylua -c lib test
+        selene lib test
+  

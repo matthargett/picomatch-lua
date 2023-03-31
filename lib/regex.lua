@@ -1850,7 +1850,7 @@ local function tokenize_ptn(codes, flags)
                 i += 1
                 negate = not negate
               end
-              local start_i = i
+              -- local start_i = i
               while
                 codes[i]
                 and (
@@ -1865,15 +1865,16 @@ local function tokenize_ptn(codes, flags)
               if codes[i] ~= 0x7D then
                 return "unknown or malformed script name"
               end
-              local c_name = utf8_sub(codes.s, start_i, i)
-              local script_set = chr_scripts[c_name]
-              if script_set then
-                table.insert(ret, 1, { "charset", negate, script_set })
-              elseif not valid_categories[c_name] then
-                return "unknown or malformed script name"
-              else
-                table.insert(ret, 1, { "category", negate, c_name })
-              end
+              -- local c_name = utf8_sub(codes.s, start_i, i)
+              error("codes not 0x7B not supported by regex")
+              -- local script_set = chr_scripts[c_name]
+              -- if script_set then
+              --   table.insert(ret, 1, { "charset", negate, script_set })
+              -- elseif not valid_categories[c_name] then
+              --   return "unknown or malformed script name"
+              -- else
+              --   table.insert(ret, 1, { "category", negate, c_name })
+              -- end
             end
           elseif codes[i] == 0x6F then
             i += 1
@@ -2003,7 +2004,7 @@ local function tokenize_ptn(codes, flags)
             i += 1
             negate = not negate
           end
-          local start_i = i
+          -- local start_i = i
           while
             codes[i]
             and (
@@ -2018,15 +2019,16 @@ local function tokenize_ptn(codes, flags)
           if codes[i] ~= 0x7D then
             return "unknown or malformed script name"
           end
-          local c_name = utf8_sub(codes.s, start_i, i)
-          local script_set = chr_scripts[c_name]
-          if script_set then
-            table.insert(outln, { "charset", negate, script_set })
-          elseif not valid_categories[c_name] then
-            return "unknown or malformed script name"
-          else
-            table.insert(outln, { "category", negate, c_name })
-          end
+          error("codes not 0x7B not supported by regex")
+          -- local c_name = utf8_sub(codes.s, start_i, i)
+          -- local script_set = chr_scripts[c_name]
+          -- if script_set then
+          --   table.insert(outln, { "charset", negate, script_set })
+          -- elseif not valid_categories[c_name] then
+          --   return "unknown or malformed script name"
+          -- else
+          --   table.insert(outln, { "category", negate, c_name })
+          -- end
         end
       elseif escape_c == 0x67 and (codes[i + 1] == 0x7B or codes[i + 1] >= 0x30 and codes[i + 1] <= 0x39) then
         local is_grouped = false
@@ -2229,7 +2231,7 @@ local function tokenize_ptn(codes, flags)
     i += 1
   end
   local max_group_n = 0
-  for i, v in ipairs(outln) do
+  for _, v in ipairs(outln) do
     if type(v) == "table" and (v[1] == 0x28 or v[1] == "quantifier" and type(v[5]) == "table" and v[5][1] == 0x28) then
       if v[1] == "quantifier" then
         v = v[5]

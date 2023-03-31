@@ -85,7 +85,7 @@ return function()
       --   assert(isMatch('a\\b\\c.txt', 'a/**/*.txt', { windows: true }));
       --   assert(isMatch('a/b/c.txt', 'a/**/*.txt', { windows: true }));
       -- });
-  
+
       it("https://github.com/isaacs/minimatch/issues/82", function()
         assert(isMatch("./src/test/a.js", "**/test/**", { format = format }))
         assert(isMatch("src/test/a.js", "**/test/**"))
