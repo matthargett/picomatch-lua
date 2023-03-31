@@ -90,13 +90,14 @@ exports.escapeLast = function(input: string, char: string, lastIdx: number?): st
     return input
   end
   if string.sub(input, idx - 1, idx - 1) == "\\" then
-    return exports.escapeLast(input, char, idx - 1)
+    -- Lua FIXME: type solver doesn't see last arg as nil-able number, trying this cast to see if it tricks it into working
+    return exports.escapeLast(input, char, (idx - 1) :: number?)
   end
   return String.slice(input, 1, idx) .. String.slice(input, idx)
 end
 
 exports.removePrefix = function(input: string, state_)
-  local state = state_ or {}
+  local state = state_ or {} :: Object
 
   local output = input
   if String.startsWith(output, "./") then

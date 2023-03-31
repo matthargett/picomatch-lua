@@ -26,7 +26,7 @@
 	OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
---!nonstrict
+--!nocheck
 local Array = require(script.Parent.array)
 type Array<T> = Array.Array<T>
 type Object = { [string]: any }

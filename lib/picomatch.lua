@@ -205,7 +205,7 @@ end
  * @return {Boolean}
  * @api public
  ]]
-picomatchCallableTable.matchBase = function(_input, _glob, options, posix_: boolean?)
+function picomatchCallableTable.matchBase(_input, _glob, options, posix_: boolean?)
   local _posix = if posix_ ~= nil then posix_ else utils.isWindows(options)
   -- local regex = if type(glob) == "table" then glob else picomatchCallableTable.makeRe(glob, options)
   -- Lua FIXME: we need the equiv of path.basename

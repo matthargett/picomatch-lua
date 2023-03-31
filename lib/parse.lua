@@ -886,11 +886,10 @@ local function parse(input: string, options: Object): Object
         value = `\\{value}`
       end
 
-      local match = REGEX_NON_SPECIAL_CHARS:exec(remaining())
-      if match ~= nil then
-        -- Lua note: Luau type solver gives bogus error here
-        value ..= (match :: Array<string>)[1]
-        state.index += string.len((match :: Array<string>)[1])
+      local match = string.match(remaining(), REGEX_NON_SPECIAL_CHARS)
+      if match then
+        value ..= match
+        state.index += string.len(match)
       end
 
       push({ type = "text", value = value })
