@@ -1,1 +1,1 @@
-return require(script.picomatch)
+return require("./picomatch")

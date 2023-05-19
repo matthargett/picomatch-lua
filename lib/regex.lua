@@ -28,7 +28,7 @@
 ]]
 --!nocheck
 --!nolint
-local Array = require(script.Parent.array)
+local Array = require("./array.lua")
 type Array<T> = Array.Array<T>
 type Object = { [string]: any }
 
@@ -1395,7 +1395,13 @@ local function tokenize_ptn(codes, flags)
           or selected_verb == "negative_lookbehind:"
           or selected_verb:find("^[pn]l[ab]:$")
         then
-          ret = { 0x28, nil, nil, selected_verb:find("^n") and 0x21 or 0x3D, selected_verb:find("b", 3, true) and 1 }
+          ret = {
+            0x28,
+            nil,
+            nil,
+            selected_verb:find("^n") and 0x21 or 0x3D,
+            selected_verb:find("b", 3, true) and 1,
+          }
         elseif selected_verb == "atomic:" then
           ret = { 0x28, nil, nil, 0x3E, nil }
         elseif
@@ -1800,7 +1806,7 @@ local function tokenize_ptn(codes, flags)
               radix1 and (radix2 and 64 * radix0 + 8 * radix1 + radix2 or 8 * radix0 + radix1) or radix0
             )
           elseif codes[i] == 0x45 then
-            -- intentionally left blank, \E that's not preceded \Q is ignored
+          -- intentionally left blank, \E that's not preceded \Q is ignored
           elseif codes[i] == 0x51 then
             local start_i = i + 1
             repeat
@@ -1954,7 +1960,7 @@ local function tokenize_ptn(codes, flags)
           table.insert(outln, { "backref", escape_d })
         end
       elseif escape_c == 0x45 then
-        -- intentionally left blank, \E that's not preceded \Q is ignored
+      -- intentionally left blank, \E that's not preceded \Q is ignored
       elseif escape_c == 0x51 then
         local start_i = i + 1
         repeat

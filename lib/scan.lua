@@ -24,10 +24,10 @@ THE SOFTWARE.
 ]]
 --!strict
 
-local String = require(script.Parent.string)
+local String = require("./string")
 type Object = { [string]: any }
-local utils = require(script.Parent.utils)
-local constants = require(script.Parent.constants)
+local utils = require("./utils")
+local constants = require("./constants")
 
 local CHAR_ASTERISK, CHAR_AT, CHAR_BACKWARD_SLASH, CHAR_COMMA, CHAR_DOT, CHAR_EXCLAMATION_MARK, CHAR_FORWARD_SLASH, CHAR_LEFT_CURLY_BRACE, CHAR_LEFT_PARENTHESES, CHAR_LEFT_SQUARE_BRACKET, CHAR_PLUS, CHAR_QUESTION_MARK, CHAR_RIGHT_CURLY_BRACE, CHAR_RIGHT_PARENTHESES, CHAR_RIGHT_SQUARE_BRACKET =
   constants.CHAR_ASTERISK, --[*]

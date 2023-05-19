@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]
 --!strict
-local Array = require(script.Parent.array)
-local String = require(script.Parent.string)
+local Array = require("./array")
+local String = require("./string")
 type Object = { [string]: any }
 local exports = {}
 
@@ -34,7 +34,7 @@ local path = { sep = "\\" }
 -- local win32 = process.platform == "win32"
 local win32 = true
 
-local Constants = require(script.Parent.constants)
+local Constants = require("./constants")
 local REGEX_BACKSLASH = Constants.REGEX_BACKSLASH
 local REGEX_REMOVE_BACKSLASH = Constants.REGEX_REMOVE_BACKSLASH
 local REGEX_SPECIAL_CHARS = Constants.REGEX_SPECIAL_CHARS

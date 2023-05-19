@@ -24,7 +24,7 @@ THE SOFTWARE.
 ]]
 --!strict
 
-local RegExp = require(script.Parent.regex)
+local RegExp = require("./regex")
 local WIN_SLASH = "\\\\/"
 local WIN_NO_SLASH = "[^" .. WIN_SLASH .. "]"
 

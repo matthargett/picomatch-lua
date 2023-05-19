@@ -4,9 +4,9 @@
     Attributions and copyright licensing by Mozilla Contributors is licensed under CC-BY-SA 2.5
 ]]
 --!strict
-local Array = require(script.Parent.array)
+local Array = require("./array.lua")
 type Array<T> = Array.Array<T>
-local RegExp = require(script.Parent.regex)
+local RegExp = require("./regex.lua")
 type RegExp = RegExp.RegExp
 local exports = {}
 
@@ -20,17 +20,17 @@ exports.charCodeAt = function(str: string, index: number): number
   return if result == nil then NaN else result
 end
 
-exports.lastIndexOf = function(str: string, findValue: string, _fromIndex: number?): number
+exports.lastIndexOf = function(str: string, findValue: string, fromIndex_: number?): number
   -- explicitly use string.len to help bytecode compiler/JIT/interpreter avoid dynamic dispatch
   local stringLength = string.len(str)
   local fromIndex
-  if _fromIndex == nil then
+  if fromIndex_ == nil then
     fromIndex = stringLength
   else
-    if _fromIndex > stringLength then
+    if fromIndex_ > stringLength then
       fromIndex = stringLength
-    elseif _fromIndex > 0 then
-      fromIndex = _fromIndex
+    elseif fromIndex_ > 0 then
+      fromIndex = fromIndex_
     else
       fromIndex = 1
     end
@@ -67,7 +67,7 @@ exports.replace = function(str: string, regExp: RegExp, replaceFunction: Replace
     -- Lua FIXME: type analysis doesn't understand  mixed array+object like: Array<string> | { key: type }
     local m = (match :: Array<string>)[1]
     local args: Array<string | number> = Array.slice(match, 1, match.n + 1)
-    local index = match.index + offset
+    local index = match.index :: number + offset
 
     table.insert(args, index)
 
@@ -131,9 +131,8 @@ exports.replaceAll = function(str: string, substring: string, replacer)
   local endIndex = 1
 
   repeat
-    -- Lua TODO: remove these force casts when trivial guard type narowing flag gets turned on in the type solver
-    output ..= string.sub(str, endIndex, index :: number - 1) .. substring .. replacer
-    endIndex = index :: number + substringLength
+    output ..= string.sub(str, endIndex, index - 1) .. substring .. replacer
+    endIndex = index + substringLength
     -- TODO: add indexOf to string and use it here
     index = string.find(str, substring, endIndex, true)
   until index == nil

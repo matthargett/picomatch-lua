@@ -24,17 +24,17 @@ THE SOFTWARE.
 ]]
 --!strict
 
-local Array = require(script.Parent.array)
-local RegExp = require(script.Parent.regex)
+local Array = require("./array")
+local RegExp = require("./regex")
 type Object = { [string]: any }
 type Array<T> = { [number]: T }
 
-local scan = require(script.Parent.scan)
-local parse = require(script.Parent.parse)
-local utils = require(script.Parent.utils)
-local constants = require(script.Parent.constants)
+local scan = require("./scan")
+local parse = require("./parse")
+local utils = require("./utils")
+local constants = require("./constants")
 local function isObject(val)
-  return not Array.isArray(val)
+  return type(val) == "table" and not Array.isArray(val)
 end
 
 local picomatch
@@ -86,14 +86,14 @@ function picomatch(glob: any, options: Object?, returnState_: boolean?): (string
       end
       return false
     end
-    -- Lua FIXME? could not massage the types to compatibility here
+    -- Lua FIXME? could not massage the types to compatibility here, Luau doesn't consider callable table as a function type
     return arrayMatcherCallableTable :: any
   end
   local isState = isObject(glob) and glob.tokens and glob.input ~= nil and glob.input ~= ""
   if glob == "" or type(glob) ~= "string" and not isState then
     error("Expected pattern to be a non-empty string")
   end
-  local opts = if options then options else {} :: Object
+  local opts = options or {} :: Object
   local posix = utils.isWindows(opts)
   local regex = if isState
     then picomatchCallableTable.compileRe(glob, opts)
@@ -108,13 +108,18 @@ function picomatch(glob: any, options: Object?, returnState_: boolean?): (string
     ignoreOpts.ignore, ignoreOpts.onMatch, ignoreOpts.onResult = nil, nil, nil
     isIgnored = picomatch(opts.ignore, ignoreOpts, returnState) :: any
   end
-  local function matcher(input, returnObject_: boolean?)
+  -- Lua note: JS puts fields on this function, so we make it a callable table
+  local matcher_
+  local matcher = setmetatable({}, {
+    __call = function(_, input: string, returnObject: boolean?)
+      return matcher_(input, returnObject)
+    end,
+  })
+  function matcher_(input: string, returnObject_: boolean?)
     local returnObject = if returnObject_ ~= nil then returnObject_ else false
     local isMatch, match, output
-    do
-      local testResult = picomatchCallableTable.test(input, regex, opts, { glob = glob, posix = posix })
-      isMatch, match, output = testResult.isMatch, testResult.match, testResult.output
-    end
+    local testResult = picomatchCallableTable.test(input, regex, opts, { glob = glob, posix = posix })
+    isMatch, match, output = testResult.isMatch, testResult.match, testResult.output
     local result = {
       glob = glob,
       state = state,
@@ -126,7 +131,7 @@ function picomatch(glob: any, options: Object?, returnState_: boolean?): (string
       isMatch = isMatch,
     }
     if type(opts.onResult) == "function" then
-      opts:onResult(result)
+      opts.onResult(result)
     end
     if isMatch == false then
       result.isMatch = false
@@ -134,13 +139,13 @@ function picomatch(glob: any, options: Object?, returnState_: boolean?): (string
     end
     if isIgnored(input) then
       if type(opts.onIgnore) == "function" then
-        opts:onIgnore(result)
+        opts.onIgnore(result)
       end
       result.isMatch = false
       return if returnObject then result else false
     end
     if type(opts.onMatch) == "function" then
-      opts:onMatch(result)
+      opts.onMatch(result)
     end
     return if returnObject then result else true
   end
@@ -170,7 +175,7 @@ function picomatchCallableTable.test(input, regex, options, more_: Object?)
   local more = if more_ ~= nil then options else {} :: Object
   local glob, posix = more.glob, more.posix
   if type(input) ~= "string" then
-    error("Expected input to be a string")
+    error("Expected input to be a string, got " .. tostring(input))
   end
   if input == "" then
     return { isMatch = false, output = "" }
@@ -334,16 +339,17 @@ end
  ]]
 function picomatchCallableTable.makeRe(input, options_: Object?, returnOutput_: boolean?, returnState_: boolean?)
   local options = options_ or {} :: Object
-  local returnOutput = if returnOutput_ ~= nil then returnOutput_ else false
-  local returnState = if returnState_ ~= nil then returnState_ else false
+  local returnOutput = returnOutput_ or false
+  local returnState = returnState_ or false
   if type(input) ~= "string" then
     error("Expected a non-empty string")
   end
   local parsed = { negated = false, fastpaths = true }
+  local firstInputChar = string.sub(input, 1, 1)
   if
     -- Lua TODO?: never use fastpaths so we avoid making parse a callable table
     -- options.fastpaths ~= false
-    false and (input[1] == "." or input[1] == "*")
+    false and (firstInputChar == "." or firstInputChar == "*")
   then
     -- parsed.output = parse.fastpaths(input, options)
     parsed.output = nil
@@ -389,4 +395,4 @@ picomatchCallableTable.constants = constants
 --[[*
  * Expose "picomatch"
  ]]
-return picomatch
+return picomatchCallableTable

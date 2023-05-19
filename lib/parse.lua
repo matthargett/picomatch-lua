@@ -24,14 +24,14 @@ THE SOFTWARE.
 ]]
 --!strict
 
-local Array = require(script.Parent.array)
+local Array = require("./array")
 type Array<T> = Array.Array<T>
-local String = require(script.Parent.string)
+local String = require("./string")
 type Object = { [string]: any }
-local RegExp = require(script.Parent.regex)
+local RegExp = require("./regex")
 
-local constants = require(script.Parent.constants)
-local utils = require(script.Parent.utils)
+local constants = require("./constants")
+local utils = require("./utils")
 
 --[[*
  * Constants
